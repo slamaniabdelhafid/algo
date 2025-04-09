@@ -7,11 +7,11 @@ def compare_random_data():
         data_size = random.randint(1, 100)
         data = bytes(random.getrandbits(8) for _ in range(data_size))
         
-        # Кодируем через C++
+        # Кодирование через C++ с <~ и ~>
         p = subprocess.run(['./ascii85', '-e'], input=data, capture_output=True)
         c_encoded = p.stdout.decode().strip()
         
-        # Кодируем через Python
+        # Кодирование через Python (также с <~ и ~>)
         py_encoded = base64.a85encode(data).decode().strip()
         
         if c_encoded != py_encoded:
@@ -20,11 +20,11 @@ def compare_random_data():
             print("Python:", py_encoded)
             return False
         
-        # Декодируем через C++
+        # Декодирование через C++
         p = subprocess.run(['./ascii85', '-d'], input=c_encoded.encode(), capture_output=True)
         c_decoded = p.stdout
         
-        # Декодируем через Python
+        # Декодирование через Python
         py_decoded = base64.a85decode(c_encoded.encode())
         
         if c_decoded != py_decoded:
