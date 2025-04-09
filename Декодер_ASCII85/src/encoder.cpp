@@ -30,10 +30,10 @@ std::string encode(const std::vector<uint8_t>& data) {
         }
     }
 
-    // Обрезаем лишние символы для неполных блоков
+    // Добавляем символы <~ и ~> для неполных блоков
     if (data.size() % 4 != 0) {
-        size_t pad = 4 - (data.size() % 4);
-        result.erase(result.size() - pad, pad);
+        result.insert(0, "<~");
+        result.append("~>");
     }
 
     return result;
