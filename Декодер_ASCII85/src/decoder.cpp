@@ -3,6 +3,15 @@
 std::vector<uint8_t> decode(const std::string& encoded) {
     std::vector<uint8_t> result;
     size_t i = 0;
+
+    // Удаляем <~ и ~>
+    if (encoded.size() >= 2 && encoded.substr(0, 2) == "<~") {
+        i = 2;
+    }
+    if (encoded.size() >= 2 && encoded.substr(encoded.size() - 2, 2) == "~>") {
+        encoded = encoded.substr(0, encoded.size() - 2);
+    }
+
     while (i < encoded.size()) {
         if (encoded[i] == 'z') {
             result.push_back(0);
@@ -40,7 +49,7 @@ std::vector<uint8_t> decode(const std::string& encoded) {
         i += 5;
     }
 
-    // Удаляем лишние нули в конце
+    // Удаляем лишние нули
     while (!result.empty() && result.back() == 0) {
         result.pop_back();
     }
