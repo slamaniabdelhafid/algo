@@ -21,3 +21,17 @@ TEST(EncodeTest, MixedData) {
     auto result = encode(data);
     EXPECT_EQ(result, expected);
 }
+
+TEST(EncodeTest, PartialBlockWithPadding) {
+    std::vector<uint8_t> data{0x01, 0x02};
+    std::string expected = "<~!@#~>";
+    auto result = encode(data);
+    EXPECT_EQ(result, expected);
+}
+
+TEST(DecodeTest, PartialBlockWithPadding) {
+    std::string input = "<~!@#~>";
+    std::vector<uint8_t> expected{0x01, 0x02};
+    auto result = decode(input);
+    EXPECT_EQ(result, expected);
+}
