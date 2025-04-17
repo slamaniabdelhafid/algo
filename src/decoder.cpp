@@ -8,8 +8,8 @@ std::vector<uint8_t> decode(const std::string& encoded) {
     std::vector<uint8_t> result;
     size_t i = 0;
 
-    // Создаем копию строки для модификации
-    std::string encoded_str = encoded;
+   
+    std::string encoded_str = encoded;  
 
     if (encoded_str.find("<~") == 0) {
         i = 2;
