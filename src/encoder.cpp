@@ -1,15 +1,13 @@
 #include "ascii85.h"
-#include <vector>
-#include <string>
 #include <cstdint>
-#include <stdexcept>
+#include <vector>
 
 std::string encode(const std::vector<uint8_t>& data) {
     std::string result;
     size_t i = 0;
     while (i < data.size()) {
         std::vector<uint8_t> chunk(4, 0);
-        size_t chunk_size = std::min(data.size() - i, 4);
+        size_t chunk_size = std::min(data.size() - i, static_cast<size_t>(4)); // Исправлено
         std::copy(data.begin() + i, data.begin() + i + chunk_size, chunk.begin());
         i += chunk_size;
 
@@ -34,10 +32,9 @@ std::string encode(const std::vector<uint8_t>& data) {
         }
     }
 
-    // Добавляем символы <~ и ~> для неполных блоков
     if (data.size() % 4 != 0) {
-        result.insert(0, "<~");
-        result.append("~>");
+        size_t pad = 4 - (data.size() % 4);
+        result.erase(result.size() - pad, pad);
     }
 
     return result;
