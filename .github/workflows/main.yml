@@ -11,19 +11,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libgtest-dev python3
+          sudo apt-get install -y build-essential libgtest-dev python3 python3-pip
+
       - name: Build Google Test
         run: |
-          cd /usr/src/gtest
+          cd /usr/src/gtest/googletest
           sudo cmake .
           sudo make
-          sudo cp *.a /usr/lib
+          sudo cp lib/*.a /usr/lib
+
       - name: Compile Project
         run: make
+
       - name: Run Tests
         run: ./tests
+
       - name: Run Python Tests
         run: python3 scripts/test_random.py
