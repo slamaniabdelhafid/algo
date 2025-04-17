@@ -29,7 +29,7 @@ jobs:
         run: make
 
       - name: Run Tests
-        run: ./test_suite  # Исправлено
+        run: ./test_suite
 
       - name: Run Python Tests
         run: python3 scripts/test_random.py
