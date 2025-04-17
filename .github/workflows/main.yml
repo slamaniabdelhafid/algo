@@ -19,6 +19,7 @@ jobs:
 
       - name: Build Google Test
         run: |
+          # Переходим в правильную папку Google Test
           cd /usr/src/gtest/googletest
           sudo cmake .
           sudo make
