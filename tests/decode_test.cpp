@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
-#include  "../src/ascii85.h"
+#include "src/ascii85.h" 
+#include <cstdint>     
+#include <stdexcept>       
 
 TEST(DecodeTest, ZeroBlock) {
     std::string input = "z";
