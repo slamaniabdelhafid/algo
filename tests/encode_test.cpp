@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
-#include  "../src/ascii85.h"
+#include "src/ascii85.h" 
+#include <cstdint>         
+#include <stdexcept>        
 
 TEST(EncodeTest, ZeroBlock) {
     std::vector<uint8_t> data{0, 0, 0, 0};
