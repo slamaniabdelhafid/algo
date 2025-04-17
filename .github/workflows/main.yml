@@ -19,7 +19,6 @@ jobs:
 
       - name: Build Google Test Manually
         run: |
-          # Скачиваем Google Test вручную
           git clone https://github.com/google/googletest.git
           cd googletest
           mkdir build && cd build
