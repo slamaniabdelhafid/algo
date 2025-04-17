@@ -1,9 +1,5 @@
 #include <iostream>
-#include "ascii85.h"
-#include <vector>
-#include <string>
-#include <cstdint>
-#include <stdexcept>
+#include "src/ascii85.h" 
 
 int main(int argc, char* argv[]) {
     if (argc != 2 || (strcmp(argv[1], "-e") != 0 && strcmp(argv[1], "-d") != 0)) {
