@@ -22,14 +22,14 @@ jobs:
           git clone https://github.com/google/googletest.git
           cd googletest
           mkdir build && cd build
-          cmake ..
+          cmake .. -DCMAKE_INSTALL_PREFIX=/usr  # Укажите путь к библиотекам
           sudo make install
 
       - name: Compile Project
         run: make
 
       - name: Run Tests
-        run: ./test_suite  # Исправлено: теперь запускаем test_suite вместо tests
+        run: ./test_suite
 
       - name: Run Python Tests
         run: python3 scripts/test_random.py
