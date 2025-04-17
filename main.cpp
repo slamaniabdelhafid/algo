@@ -1,6 +1,9 @@
 #include <iostream>
-#include <vector>
 #include "ascii85.h"
+#include <vector>
+#include <string>
+#include <cstdint>
+#include <stdexcept>
 
 int main(int argc, char* argv[]) {
     if (argc != 2 || (strcmp(argv[1], "-e") != 0 && strcmp(argv[1], "-d") != 0)) {
@@ -20,7 +23,7 @@ int main(int argc, char* argv[]) {
             std::cout.write(reinterpret_cast<const char*>(decoded.data()), decoded.size());
         }
     } catch (const std::exception& e) {
-        std::cerr << "Error: " + std::string(e.what()) << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
 
