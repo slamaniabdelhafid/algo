@@ -1,4 +1,8 @@
 #include "ascii85.h"
+#include <vector>
+#include <string>
+#include <cstdint>
+#include <stdexcept>
 
 std::string encode(const std::vector<uint8_t>& data) {
     std::string result;
