@@ -8,15 +8,18 @@ std::vector<uint8_t> decode(const std::string& encoded) {
     std::vector<uint8_t> result;
     size_t i = 0;
 
-    if (encoded.find("<~") == 0) {
+    // Создаем копию строки для модификации
+    std::string encoded_str = encoded;
+
+    if (encoded_str.find("<~") == 0) {
         i = 2;
     }
-    if (encoded.size() >= 2 && encoded.substr(encoded.size() - 2) == "~>") {
-        encoded = encoded.substr(0, encoded.size() - 2);
+    if (encoded_str.size() >= 2 && encoded_str.substr(encoded_str.size() - 2) == "~>") {
+        encoded_str = encoded_str.substr(0, encoded_str.size() - 2);
     }
 
-    while (i < encoded.size()) {
-        if (encoded[i] == 'z') {
+    while (i < encoded_str.size()) {
+        if (encoded_str[i] == 'z') {
             result.push_back(0);
             result.push_back(0);
             result.push_back(0);
@@ -25,14 +28,14 @@ std::vector<uint8_t> decode(const std::string& encoded) {
             continue;
         }
 
-        if (encoded.size() - i < 5) {
+        if (encoded_str.size() - i < 5) {
             throw std::invalid_argument("Invalid input length");
         }
 
         std::vector<uint8_t> digits(5);
         for (size_t j = 0; j < 5; ++j) {
-            digits[j] = encoded[i + j] - 33;
-            if (digits[j] >= 85) { // Убрано (digits[j] < 0 || )
+            digits[j] = encoded_str[i + j] - 33;
+            if (digits[j] >= 85) {
                 throw std::invalid_argument("Invalid character");
             }
         }
