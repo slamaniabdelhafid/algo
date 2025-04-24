@@ -1,4 +1,3 @@
-#include "ascii85.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -6,9 +5,43 @@
 #include <stdexcept>
 #include <cctype>
 #include <cstdint>
+#include "ascii85.h"
 
 namespace ascii85 {
+// 1) encoder
+std::string encode_ascii85(const std::string& input) {
+    std::string output = "<~";
+    size_t i = 0;
 
+    while (i < input.size()) {
+        uint32_t chunk = 0;
+        int len = 0;
+
+        for (int j = 0; j < 4; ++j) {
+            chunk <<= 8;
+            if (i < input.size()) {
+                chunk |= static_cast<unsigned char>(input[i++]);
+                ++len;
+            }
+        }
+
+        if (chunk == 0 && len == 4) {
+            output += 'z';
+        } else {
+            char encoded[5];
+            for (int j = 4; j >= 0; --j) {
+                encoded[j] = static_cast<char>(chunk % 85 + 33);
+                chunk /= 85;
+            }
+            output.append(encoded, encoded + len + 1);
+        }
+    }
+
+    output += "~>";
+    return output;
+}
+
+// decoder 
 std::string decode_ascii85_to_string(const std::string& input_raw) {
     std::string input = input_raw;
     if (input.size() >= 2 && input.substr(0, 2) == "<~") {
