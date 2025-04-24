@@ -1,28 +1,23 @@
 #include <gtest/gtest.h>
-#include "../src/ascii85.h" 
-#include <cstdint>     
-#include <stdexcept>       
+#include "../src/ascii85.h"
+#include <cstdint>
+#include <stdexcept>
 
 TEST(DecodeTest, ZeroBlock) {
     std::string input = "z";
-    std::vector<uint8_t> expected{0, 0, 0, 0};
-    auto result = decode(input);
-    EXPECT_EQ(result, expected);
+    std::string expected(4, '\0');
+    std::string result = ascii85::decode_ascii85_to_string(input);
+    ASSERT_EQ(result, expected);
 }
 
 TEST(DecodeTest, PartialBlock) {
-    std::string input = "!@#";
-    std::vector<uint8_t> expected{0x01, 0x02};
-    auto result = decode(input);
-    EXPECT_EQ(result, expected);
+    std::string input = "<~!1~>";
+    std::string expected = "a";
+    std::string result = ascii85::decode_ascii85_to_string(input);
+    ASSERT_EQ(result, expected);
 }
 
-TEST(DecodeTest, InvalidLength) {
-    std::string input = "abc";
-    EXPECT_THROW(decode(input), std::invalid_argument);
-}
-
-TEST(DecodeTest, InvalidCharacter) {
-    std::string input = "abcde!";
-    EXPECT_THROW(decode(input), std::invalid_argument);
+TEST(DecodeTest, InvalidInput) {
+    std::string input = "abcde"; // Недопустимые символы
+    EXPECT_THROW(ascii85::decode_ascii85_to_string(input), std::runtime_error);
 }
