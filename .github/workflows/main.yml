@@ -30,8 +30,13 @@ jobs:
       - name: Run tests
         run: |
           ./test_ascii85
-      - name: Python
-        run: python3 test_random.py
+      - name: Install Python Dependencies
+        run: |
+          sudo apt-get install python3
+          pip3 install base64  # Хотя base64 уже встроен, но для надежности
+
+      - name: Run Python Tests
+        run: make python-test  
 
       - name: Clean 
         run: |
