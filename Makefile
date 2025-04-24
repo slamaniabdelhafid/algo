@@ -29,4 +29,4 @@ $(TEST_BIN): $(OBJS) $(TEST_OBJ)
         $(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-        rm -f *.o $(BIN) $(TEST_BIN)
+ rm -f *.o $(BIN) $(TEST_BIN)
