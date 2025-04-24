@@ -10,7 +10,7 @@ def compare_random_data():
         p_encode = subprocess.run(['./ascii85', '-e'], input=data, capture_output=True)
         c_encoded = p_encode.stdout.decode().strip()
         
-        # Удаляем маркеры <~ и ~>
+        # Удаление маркеров <~ и ~>
         if c_encoded.startswith('<~'):
             c_encoded = c_encoded[2:]
         if c_encoded.endswith('~>'):
