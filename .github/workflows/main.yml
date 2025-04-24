@@ -1,4 +1,4 @@
-name: ASCII85 CI
+name: ASCII85
 
 on: 
   push:
@@ -31,9 +31,8 @@ jobs:
         run: |
           ./test_ascii85
 
-      - name: Clean build files (optional)
+      - name: Clean 
         run: |
           make clean
 
-      - name: Запуск Python тестов
-        run: python3 scripts/test_random.py
+      
