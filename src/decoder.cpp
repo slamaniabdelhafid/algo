@@ -1,63 +1,62 @@
 #include "ascii85.h"
-#include <stdexcept>
-#include <cstdint>
 #include <vector>
+#include <stdexcept>
+#include <cctype>
 #include <string>
 
-std::vector<uint8_t> decode(const std::string& encoded) {
-    std::vector<uint8_t> result;
-    size_t i = 0;
+namespace ascii85 {
 
-   
-    std::string encoded_str = encoded;  
-
-    if (encoded_str.find("<~") == 0) {
-        i = 2;
+std::string decode_ascii85_to_string(const std::string& input_raw) {
+    std::string input = input_raw;
+    if (input.size() >= 2 && input.substr(0, 2) == "<~") {
+        input = input.substr(2);
     }
-    if (encoded_str.size() >= 2 && encoded_str.substr(encoded_str.size() - 2) == "~>") {
-        encoded_str = encoded_str.substr(0, encoded_str.size() - 2);
+    if (input.size() >= 2 && input.substr(input.size() - 2) == "~>") {
+        input = input.substr(0, input.size() - 2);
     }
 
-    while (i < encoded_str.size()) {
-        if (encoded_str[i] == 'z') {
-            result.push_back(0);
-            result.push_back(0);
-            result.push_back(0);
-            result.push_back(0);
-            ++i;
+    std::vector<char> group;
+    std::string output;
+    uint32_t value = 0;
+
+    for (char ch : input) {
+        if (std::isspace(static_cast<unsigned char>(ch))) continue;
+
+        if (ch == 'z') {
+            if (!group.empty()) throw std::runtime_error("'z' inside group");
+            output.append(4, '\0');
             continue;
         }
 
-        if (encoded_str.size() - i < 5) {
-            throw std::invalid_argument("Invalid input length");
-        }
+        if (ch < '!' || ch > 'u') throw std::runtime_error("Invalid character in ASCII85");
 
-        std::vector<uint8_t> digits(5);
-        for (size_t j = 0; j < 5; ++j) {
-            digits[j] = encoded_str[i + j] - 33;
-            if (digits[j] >= 85) {
-                throw std::invalid_argument("Invalid character");
+        group.push_back(ch);
+        if (group.size() == 5) {
+            value = 0;
+            for (char c : group) {
+                value = value * 85 + (c - 33);
             }
+            for (int i = 3; i >= 0; --i)
+                output += static_cast<char>((value >> (i * 8)) & 0xFF);
+            group.clear();
         }
-
-        uint32_t value = 0;
-        for (uint8_t d : digits) {
-            value = value * 85 + d;
-        }
-
-        std::vector<uint8_t> chunk(4);
-        for (int j = 3; j >= 0; --j) {
-            chunk[j] = value & 0xFF;
-            value >>= 8;
-        }
-
-        result.insert(result.end(), chunk.begin(), chunk.end());
-        i += 5;
     }
 
-    while (!result.empty() && result.back() == 0) {
-        result.pop_back();
+    if (!group.empty()) {
+        int padding = 5 - group.size();
+        for (int i = 0; i < padding; ++i)
+            group.push_back('u');
+
+        value = 0;
+        for (char c : group)
+            value = value * 85 + (c - 33);
+
+        for (int i = 3; i >= 0; --i)
+            if (i >= padding)
+                output += static_cast<char>((value >> (i * 8)) & 0xFF);
     }
 
-    return result;
+    return output;
 }
+
+} 
