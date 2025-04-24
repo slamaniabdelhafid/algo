@@ -4,28 +4,34 @@ import subprocess
 
 def compare_random_data():
     for _ in range(100):
-        data_size = random.randint(1, 100)
-        data = bytes(random.getrandbits(8) for _ in range(data_size))
-
+        data = bytes(random.getrandbits(8) for _ in range(random.randint(1, 100)))
+        
         # Кодирование через C++
-        result = subprocess.run(['./ascii85', '-e'], input=data, capture_output=True)
-        c_encoded = result.stdout.decode().strip()
-
+        p_encode = subprocess.run(['./ascii85', '-e'], input=data, capture_output=True)
+        c_encoded = p_encode.stdout.decode().strip()
+        
+        # Удаляем маркеры <~ и ~>
+        if c_encoded.startswith('<~'):
+            c_encoded = c_encoded[2:]
+        if c_encoded.endswith('~>'):
+            c_encoded = c_encoded[:-2]
+        
         # Кодирование через Python
         py_encoded = base64.a85encode(data).decode().strip()
-
-        assert c_encoded == py_encoded, f"Ошибка кодирования: {data.hex()}"
-
+        
+        # Сравнение
+        assert c_encoded == py_encoded, f"Encoding mismatch: {data.hex()}"
+        
         # Декодирование через C++
-        decoded = subprocess.run(['./ascii85', '-d'], input=c_encoded.encode(), capture_output=True)
-        c_decoded = decoded.stdout
-
+        p_decode = subprocess.run(['./ascii85', '-d'], input=c_encoded.encode(), capture_output=True)
+        c_decoded = p_decode.stdout
+        
         # Декодирование через Python
-        py_decoded = base64.a85decode(c_encoded.encode())
-
-        assert c_decoded == py_decoded, f"Ошибка декодирования: {c_encoded}"
-
-    print("Все тесты пройдены!")
+        py_decoded = base64.a85decode(py_encoded.encode())
+        
+        # Сравнение
+        assert c_decoded == py_decoded, f"Decoding mismatch: {c_encoded}"
 
 if __name__ == "__main__":
     compare_random_data()
+    print("All tests passed!")
