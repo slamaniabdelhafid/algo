@@ -30,9 +30,8 @@ $(TEST_BIN): $(OBJS) $(TEST_OBJ)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-#python-tests:
-	@echo "Running Python tests..."
-	@python3 test_random.py
+python-test: $(BIN)
+	python3 test_random.py
 
 clean:
 	rm -f *.o $(BIN) $(TEST_BIN)
