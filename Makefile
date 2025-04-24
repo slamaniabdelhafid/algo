@@ -1,6 +1,6 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++17 -Isrc -I/usr/include -pthread
+CXXFLAGS = -std=c++14 -Wall -I.
 GTEST_LIBS = -lgtest -lgtest_main
 
 # Files
