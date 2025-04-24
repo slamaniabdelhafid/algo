@@ -1,9 +1,8 @@
 #include <iostream>
-#include <cstring> 
-#include "src/ascii85.h"
+#include "ascii85.h"
 
 int main(int argc, char* argv[]) {
-     if (argc != 3) {
+    if (argc != 3) {
         std::cerr << "Usage: ./ascii85 <-e|-d> <text>" << std::endl;
         return 1;
     }
@@ -26,7 +25,6 @@ int main(int argc, char* argv[]) {
         std::cerr << "Unknown mode: " << mode << std::endl;
         return 1;
     }
+
     return 0;
 }
-
-
