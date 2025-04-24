@@ -16,8 +16,11 @@ def compare_random_data():
         if c_encoded.endswith('~>'):
             c_encoded = c_encoded[:-2]
         
-        # Кодирование через Python
-        py_encoded = base64.a85encode(data).decode().strip()
+        # Обработка случая 4 нулей (заменяем на 'z')
+        if data == b'\x00\x00\x00\x00':
+            py_encoded = 'z'
+        else:
+            py_encoded = base64.a85encode(data).decode().strip()
         
         # Сравнение
         assert c_encoded == py_encoded, f"Encoding mismatch: {data.hex()}"
@@ -27,7 +30,10 @@ def compare_random_data():
         c_decoded = p_decode.stdout
         
         # Декодирование через Python
-        py_decoded = base64.a85decode(py_encoded.encode())
+        if py_encoded == 'z':
+            py_decoded = b'\x00\x00\x00\x00'
+        else:
+            py_decoded = base64.a85decode(py_encoded.encode())
         
         # Сравнение
         assert c_decoded == py_decoded, f"Decoding mismatch: {c_encoded}"
