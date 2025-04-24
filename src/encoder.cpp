@@ -1,41 +1,39 @@
 #include "ascii85.h"
 #include <cstdint>
-#include <vector>
+#include <string>
 
-std::string encode(const std::vector<uint8_t>& data) {
-    std::string result;
+namespace ascii85 {
+
+std::string encode_ascii85(const std::string& input) {
+    std::string output = "<~";
     size_t i = 0;
-    while (i < data.size()) {
-        std::vector<uint8_t> chunk(4, 0);
-        size_t chunk_size = std::min(data.size() - i, static_cast<size_t>(4)); // Исправлено
-        std::copy(data.begin() + i, data.begin() + i + chunk_size, chunk.begin());
-        i += chunk_size;
 
-        uint32_t value = 0;
-        for (size_t j = 0; j < 4; ++j) {
-            value = (value << 8) | chunk[j];
+    while (i < input.size()) {
+        uint32_t chunk = 0;
+        int len = 0;
+
+        for (int j = 0; j < 4; ++j) {
+            chunk <<= 8;
+            if (i < input.size()) {
+                chunk |= static_cast<unsigned char>(input[i++]);
+                ++len;
+            }
         }
 
-        if (value == 0 && chunk_size == 4) {
-            result += 'z';
-            continue;
-        }
-
-        std::vector<uint8_t> digits(5);
-        for (int j = 4; j >= 0; --j) {
-            digits[j] = value % 85;
-            value /= 85;
-        }
-
-        for (uint8_t d : digits) {
-            result += static_cast<char>(d + 33);
+        if (chunk == 0 && len == 4) {
+            output += 'z';
+        } else {
+            char encoded[5];
+            for (int j = 4; j >= 0; --j) {
+                encoded[j] = static_cast<char>(chunk % 85 + 33);
+                chunk /= 85;
+            }
+            output.append(encoded, encoded + len + 1);
         }
     }
 
-    if (data.size() % 4 != 0) {
-        size_t pad = 4 - (data.size() % 4);
-        result.erase(result.size() - pad, pad);
-    }
-
-    return result;
+    output += "~>";
+    return output;
 }
+
+} 
