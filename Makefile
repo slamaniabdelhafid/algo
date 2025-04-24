@@ -8,7 +8,7 @@ GTEST_LIBS = -lgtest -lgtest_main -pthread
 # Files
 SRC = ascii85.cpp
 MAIN = main.cpp
-TEST = test_ascii85.cpp
+TEST = test.cpp
 
 # Outputs
 BIN = ascii85
