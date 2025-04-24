@@ -1,14 +1,34 @@
+# Compiler and flags
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++17 -Isrc
-GTEST_LIB = -lgtest -lgtest_main -pthread  # Добавьте -pthread
+CXXFLAGS = -std=c++14 -Wall -Isrc -Itests -pthread
 
-all: ascii85 test_suite
+# Google Test flags
+GTEST_LIBS = -lgtest -lgtest_main
 
-ascii85: src/encoder.cpp src/decoder.cpp main.cpp
-	$(CXX) $(CXXFLAGS) -o ascii85 $^ $(GTEST_LIB)
+# Files
+SRC = src/encoder.cpp src/decoder.cpp
+MAIN = main.cpp
+TESTS = tests/encode_test.cpp tests/decode_test.cpp
 
-test_suite: tests/decode_test.cpp tests/encode_test.cpp src/encoder.cpp src/decoder.cpp
-	$(CXX) $(CXXFLAGS) -o test_suite $^ $(GTEST_LIB)  # Порядок аргументов важен
+# Outputs
+BIN = ascii85
+TEST_BIN = test_ascii85
+
+# Object files
+OBJS = $(SRC:.cpp=.o)
+MAIN_OBJ = $(MAIN:.cpp=.o)
+TEST_OBJS = $(TESTS:.cpp=.o)
+
+all: $(BIN) $(TEST_BIN)
+
+$(BIN): $(OBJS) $(MAIN_OBJ)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+$(TEST_BIN): $(OBJS) $(TEST_OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(GTEST_LIBS)
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f ascii85 test_suite
+	rm -f *.o $(BIN) $(TEST_BIN)
