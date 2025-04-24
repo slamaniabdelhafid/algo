@@ -3,26 +3,30 @@
 #include "src/ascii85.h"
 
 int main(int argc, char* argv[]) {
-    if (argc != 2 || (strcmp(argv[1], "-e") != 0 && strcmp(argv[1], "-d") != 0)) {
-        std::cerr << "Usage: " << argv[0] << " [-e|-d]" << std::endl;
+     if (argc != 3) {
+        std::cerr << "Usage: ./ascii85 <-e|-d> <text>" << std::endl;
         return 1;
     }
 
-    std::string input;
-    std::getline(std::cin, input);
+    std::string mode = argv[1];
+    std::string data = argv[2];
 
-    try {
-        if (strcmp(argv[1], "-e") == 0) {
-            std::vector<uint8_t> data(input.begin(), input.end());
-            std::cout << encode(data);
-        } else {
-            std::vector<uint8_t> decoded = decode(input);
-            std::cout.write(reinterpret_cast<const char*>(decoded.data()), decoded.size());
+    if (mode == "-e") {
+        std::string encoded = ascii85::encode_ascii85(data);
+        std::cout << encoded << std::endl;
+    } else if (mode == "-d") {
+        try {
+            std::string decoded =ascii85::decode_ascii85_to_string(data);
+            std::cout << decoded << std::endl;
+        } catch (const std::exception& e) {
+            std::cerr << "Decode error: " << e.what() << std::endl;
+            return 1;
         }
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+    } else {
+        std::cerr << "Unknown mode: " << mode << std::endl;
         return 1;
     }
-
     return 0;
 }
+
+
