@@ -1,42 +1,39 @@
 name: ASCII85 CI
 
-on:
+on: 
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
-
+    branches:
+        - main
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Установка зависимостей
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install build tools and Google Test
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libgtest-dev python3 python3-pip
+          sudo apt-get install -y build-essential libgtest-dev
 
-      - name: Сборка Google Test
-        run: |
-          git clone https://github.com/google/googletest.git
-          cd googletest
-          mkdir build && cd build
-          cmake .. -DCMAKE_INSTALL_PREFIX=/usr
-          sudo make install
+          cd /usr/src/googletest && sudo cmake . && sudo make
+          sudo cp /usr/src/googletest/lib/*.a /usr/lib
 
-      - name: Исправление путей к Google Test
+      - name: Build the project
         run: |
-          sudo cp -r /usr/lib/googletest/* /usr/lib/
-          sudo cp -r /usr/include/googletest/* /usr/include/
-
-      - name: Сборка проекта
-        run: |
-          make clean
           make
 
-      - name: Запуск тестов
-        run: ./test_ascii85  # Используйте правильное имя тестового бинарника
+      - name: Run tests
+        run: |
+          ./test_ascii85
+
+      - name: Clean build files (optional)
+        run: |
+          make clean
 
       - name: Запуск Python тестов
         run: python3 scripts/test_random.py
