@@ -1,34 +1,32 @@
-# Compiler and flags
+# Компилятор и флаги
 CXX = g++
-CXXFLAGS = -std=c++14 -Wall -Isrc -Itests -pthread
-
-# Google Test flags
+CXXFLAGS = -Wall -Wextra -std=c++17 -Isrc -I/usr/include -pthread
 GTEST_LIBS = -lgtest -lgtest_main
 
-# Files
+# Файлы
 SRC = src/encoder.cpp src/decoder.cpp
 MAIN = main.cpp
-TESTS = tests/encode_test.cpp tests/decode_test.cpp
+TEST_FILES = tests/encode_test.cpp tests/decode_test.cpp
 
-# Outputs
+# Цели
 BIN = ascii85
 TEST_BIN = test_ascii85
 
-# Object files
+# Объектные файлы
 OBJS = $(SRC:.cpp=.o)
 MAIN_OBJ = $(MAIN:.cpp=.o)
-TEST_OBJS = $(TESTS:.cpp=.o)
+TEST_OBJS = $(TEST_FILES:.cpp=.o)
 
 all: $(BIN) $(TEST_BIN)
 
 $(BIN): $(OBJS) $(MAIN_OBJ)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+    $(CXX) $(CXXFLAGS) -o $@ $^
 
 $(TEST_BIN): $(OBJS) $(TEST_OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(GTEST_LIBS)
+    $(CXX) $(CXXFLAGS) -o $@ $^ $(GTEST_LIBS)
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+    $(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o $(BIN) $(TEST_BIN)
+    rm -f *.o $(BIN) $(TEST_BIN)
