@@ -1,7 +1,7 @@
 #pragma once
-#include <vector>
 #include <string>
-#include <cstdint> 
 
-std::string encode(const std::vector<uint8_t>& data);
-std::vector<uint8_t> decode(const std::string& encoded);
+namespace ascii85 {
+    std::string encode_ascii85(const std::string& input);
+    std::string decode_ascii85_to_string(const std::string& input);
+}
