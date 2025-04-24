@@ -1,7 +1,7 @@
 # Compiler and flags
 CXX = g++
 CXXFLAGS = -std=c++14 -Wall -I.
-GTEST_LIBS = -lgtest -lgtest_main
+GTEST_LIB = -lgtest -lgtest_main -pthread
 
 # Files
 SRC = src/encoder.cpp src/decoder.cpp
@@ -19,13 +19,13 @@ TEST_OBJS = $(TEST_FILES:.cpp=.o)
 
 all: $(BIN) $(TEST_BIN)
 
-$(BIN): $(OBJS) $(MAIN_OBJ)
+$(BIN):        $(OBJS) $(MAIN_OBJ)
         $(CXX) $(CXXFLAGS) -o $@ $^
 
-$(TEST_BIN): $(OBJS) $(TEST_OBJ)
+$(TEST_BIN):        $(OBJS) $(TEST_OBJ)
         $(CXX) $(CXXFLAGS) -o $@ $^ $(GTEST_LIBS)
 
-%.o: %.cpp
+%.o:        %.cpp
         $(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
