@@ -1,6 +1,11 @@
 #include "ascii85.h"
-#include <cstdint>
+#include <iostream>
+#include <vector>
 #include <string>
+#include <sstream>
+#include <stdexcept>
+#include <cctype>
+#include <cstdint>
 
 namespace ascii85 {
 
