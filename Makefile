@@ -1,14 +1,14 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++14 -Wall -I.        # -I. includes current dir (for ascii85.h)
+CXXFLAGS = -std=c++14 -Wall -I.        # -I. includes current dir (for ascii85.hpp)
 
 # Google Test flags
 GTEST_LIBS = -lgtest -lgtest_main -pthread
 
 # Files
-SRC = src/encoder.cpp src/decoder.cpp
+SRC = ascii85.cpp
 MAIN = main.cpp
-TEST_FILES = tests/encode_test.cpp tests/decode_test.cpp
+TEST = test_ascii85.cpp
 
 # Outputs
 BIN = ascii85
@@ -36,4 +36,3 @@ $(TEST_BIN): $(OBJS) $(TEST_OBJ)
 
 clean:
 	rm -f *.o $(BIN) $(TEST_BIN)
-
