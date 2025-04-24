@@ -32,7 +32,7 @@ $(TEST_BIN): $(OBJS) $(TEST_OBJ)
 
 #python-tests:
 	@echo "Running Python tests..."
-	@python3 scripts/test_random.py
+	@python3 test_random.py
 
 clean:
 	rm -f *.o $(BIN) $(TEST_BIN)
