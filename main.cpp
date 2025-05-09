@@ -1,28 +1,26 @@
-#include <iostream>
 #include "ascii85.h"
+#include <iostream>
 
 int main(int argc, char* argv[]) {
-    if (argc != 3) {
-        std::cerr << "Usage: ./ascii85 <-e|-d> <text>" << std::endl;
+    if (argc != 2) {
+        std::cerr << "Usage: " << argv[0] << " [-e|-d]\n";
         return 1;
     }
 
     std::string mode = argv[1];
-    std::string data = argv[2];
+    std::string input(std::istreambuf_iterator<char>(std::cin), {});
 
-    if (mode == "-e") {
-        std::string encoded = ascii85::encode_ascii85(data);
-        std::cout << encoded << std::endl;
-    } else if (mode == "-d") {
-        try {
-            std::string decoded =ascii85::decode_ascii85_to_string(data);
-            std::cout << decoded << std::endl;
-        } catch (const std::exception& e) {
-            std::cerr << "Decode error: " << e.what() << std::endl;
+    try {
+        if (mode == "-e") {
+            std::cout << ascii85::encode(input);
+        } else if (mode == "-d") {
+            std::cout << ascii85::decode(input);
+        } else {
+            std::cerr << "Invalid mode. Use -e (encode) or -d (decode)\n";
             return 1;
         }
-    } else {
-        std::cerr << "Unknown mode: " << mode << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << "\n";
         return 1;
     }
 
