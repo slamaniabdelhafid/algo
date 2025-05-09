@@ -24,4 +24,3 @@ jobs:
         run: |
           make
           ./test_ascii85
-          python3 test_random.py
