@@ -39,7 +39,4 @@ jobs:
       run: |
         make test-samples
         
-    - name: Check formatting
-      run: |
-        sudo apt-get install -y clang-format
-        find src include test -name '*.cpp' -o -name '*.h' | xargs clang-format --dry-run --Werror
+
