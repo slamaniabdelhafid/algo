@@ -11,17 +11,32 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libeigen3-dev g++ make
+        sudo apt-get install -y \
+          libeigen3-dev \
+          build-essential \
+          cmake \
+          libgtest-dev \
+          googletest
         
-    - name: Build
-      run: make
-      
+    - name: Build and install GTest
+      run: |
+        cd /usr/src/gtest
+        sudo cmake CMakeLists.txt
+        sudo make
+        sudo cp *.a /usr/lib
+        
+    - name: Build project
+      run: |
+        make
+        
     - name: Run unit tests
-      run: make test
-      
+      run: |
+        make test
+        
     - name: Test sample files
-      run: make test-samples
-      
+      run: |
+        make test-samples
+        
     - name: Check formatting
       run: |
         sudo apt-get install -y clang-format
