@@ -36,7 +36,9 @@ std::string encode(const std::string& data) {
         }
         
         // Append only the needed characters
-        output.append(encoded, bytes + 1);
+        for (int j = 0; j < bytes + 1; ++j) {
+            output += encoded[j];
+        }
     }
 
     return output + "~>";
@@ -103,14 +105,12 @@ std::string decode(const std::string& input) {
         }
 
         // Output only the real bytes (not padding)
-        for (size_t i = 0; i < group.size() + 1; ++i) {
-            if (i < 4) {
-                result += static_cast<char>((value >> (24 - 8 * i)) & 0xFF);
-            }
+        for (size_t i = 0; i < 4 - padding; ++i) {
+            result += static_cast<char>((value >> (24 - 8 * i)) & 0xFF);
         }
     }
 
     return result;
 }
 
-} // namespace ascii85
+} 
