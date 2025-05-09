@@ -8,40 +8,20 @@
 namespace ascii85 {
 
 std::string encode(const std::string& data) {
-    std::string output = "<~";
-    size_t i = 0;
+    std::string result = "<~";
     const size_t len = data.size();
-
-    while (i < len) {
-        uint32_t chunk = 0;
-        int bytes = 0;
-
-        // Pack 4 bytes into a 32-bit chunk
-        while (bytes < 4 && i < len) {
-            chunk = (chunk << 8) | static_cast<uint8_t>(data[i++]);
-            bytes++;
-        }
-
-        // Special case for 4 null bytes
-        if (bytes == 4 && chunk == 0) {
-            output += 'z';
-            continue;
-        }
-
-        // Convert to ASCII85
-        char encoded[5];
-        for (int j = 4; j >= 0; --j) {
-            encoded[j] = static_cast<char>(chunk % 85 + 33);
-            chunk /= 85;
-        }
+    
+    for (size_t i = 0; i < len; i += 4) {
+        uint8_t chunk[4] = {0};
+        size_t chunk_len = std::min(static_cast<size_t>(4), len - i);
         
-        // Append only the needed characters
-        for (int j = 0; j < bytes + 1; ++j) {
-            output += encoded[j];
+        for (size_t j = 0; j < chunk_len; ++j) {
+            chunk[j] = static_cast<uint8_t>(data[i + j]);
         }
+        encode_chunk(chunk, chunk_len, result);
     }
-
-    return output + "~>";
+    
+    return result + "~>";
 }
 
 
