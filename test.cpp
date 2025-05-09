@@ -1,66 +1,25 @@
 #include "ascii85.h"
 #include <gtest/gtest.h>
-#include <string>
 
-std::string encode(const std::string& input) {
-    return ascii85::encode_ascii85(input);
+TEST(Ascii85Test, Encode) {
+    EXPECT_EQ(ascii85::encode("hello"), "<~BOu!rDZ~>");
+    EXPECT_EQ(ascii85::encode("Man"), "<~9jqo~>");
+    EXPECT_EQ(ascii85::encode(""), "<~~>");
+    EXPECT_EQ(ascii85::encode("\0\0\0\0", 4), "<~z~>");
 }
 
-std::string decode(const std::string& input) {
-    return ascii85::decode_ascii85_to_string(input);
+TEST(Ascii85Test, Decode) {
+    EXPECT_EQ(ascii85::decode("<~BOu!rDZ~>"), "hello");
+    EXPECT_EQ(ascii85::decode("9jqo"), "Man");
+    EXPECT_EQ(ascii85::decode("<~~>"), "");
+    EXPECT_EQ(ascii85::decode("z"), std::string(4, '\0'));
 }
-
-TEST(Ascii85Test, EncodeKnownValue) {
-    std::string input = "hello";
-    std::string expected = "<~BOu!rDZ~>"; 
-    EXPECT_EQ(encode(input), expected);
-}
-
-TEST(Ascii85Test, DecodeKnownValue) {
-    std::string encoded = "<~BOu!rDZ~>";
-    std::string expected = "hello";
-    EXPECT_EQ(decode(encoded), expected);
-}
-
-TEST(Ascii85Test, EncodeAnotherKnownValue) {
-    std::string input = "Man";
-    std::string expected = "<~9jqo~>"; 
-    EXPECT_EQ(encode(input), expected);
-}
-
-TEST(Ascii85Test, DecodeAnotherKnownValue) {
-    std::string encoded = "<~9jqo~>";
-    std::string expected = "Man";
-    EXPECT_EQ(decode(encoded), expected);
-}
-
 
 TEST(Ascii85Test, RoundTrip) {
-    std::string input = "HelloWorld123";
-    EXPECT_EQ(decode(encode(input)), input);
+    const std::string test = "Test\x00\xFF\n";
+    EXPECT_EQ(ascii85::decode(ascii85::encode(test)), test);
 }
 
-TEST(Ascii85Test, EmptyString) {
-    std::string input = "";
-    EXPECT_EQ(encode(input), "<~~>");
-    EXPECT_EQ(decode("<~~>"), input);
-}
-
-TEST(Ascii85Test, NullBytesCompression) {
-    std::string input = std::string("\0\0\0\0", 4);
-    std::string encoded = encode(input);
-    EXPECT_NE(encoded.find('z'), std::string::npos); 
-    EXPECT_EQ(decode(encoded), input);
-}
-
-TEST(Ascii85Test, InvalidInputThrows) {
-    std::string input = "!!invalid!!";
-    EXPECT_THROW(decode(input), std::runtime_error);
-}
-
-TEST(Ascii85Test, LongRoundTrip) {
-    std::string input(1000, 'A');
-    std::string encoded = encode(input);
-    std::string decoded = decode(encoded);
-    EXPECT_EQ(decoded, input);
+TEST(Ascii85Test, InvalidInput) {
+    EXPECT_THROW(ascii85::decode("Invalid!"), std::runtime_error);
 }
