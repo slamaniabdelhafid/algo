@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
+#include <stdexcept>  // Add this for std::runtime_error
 
 namespace ascii85 {
-    std::string encode_ascii85(const std::string& input);
-    std::string decode_ascii85_to_string(const std::string& input);
+    std::string encode(const std::string& data);
+    std::string decode(const std::string& data);
 }
