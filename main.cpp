@@ -1,5 +1,6 @@
 #include "ascii85.h"
 #include <iostream>
+#include <iterator>  // Add this for std::istreambuf_iterator
 
 int main(int argc, char* argv[]) {
     if (argc != 2) {
@@ -7,19 +8,21 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    std::string mode = argv[1];
     std::string input(std::istreambuf_iterator<char>(std::cin), {});
-
+    
     try {
-        if (mode == "-e") {
+        if (std::string(argv[1]) == "-e") {
             std::cout << ascii85::encode(input);
-        } else if (mode == "-d") {
+        } 
+        else if (std::string(argv[1]) == "-d") {
             std::cout << ascii85::decode(input);
-        } else {
+        } 
+        else {
             std::cerr << "Invalid mode. Use -e (encode) or -d (decode)\n";
             return 1;
         }
-    } catch (const std::exception& e) {
+    } 
+    catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << "\n";
         return 1;
     }
