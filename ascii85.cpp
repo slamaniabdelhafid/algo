@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstdint>
 #include <cctype>
+#include <stdexcept>  // Add this for std::runtime_error
 
 namespace {
 
@@ -76,11 +77,10 @@ std::string decode(const std::string& data) {
 
         // Unpack to 1-4 bytes
         for (size_t j = 0; j < group_len - 1; ++j) {
-            result += static_cast<char>((value >> (24 - 8 * j)) & 0xFF);
+            result += static_cast<char>((value >> (24 - 8 * j)) & 0xFF;
         }
     }
     
     return result;
 }
-
-} 
+} // namespace ascii85
