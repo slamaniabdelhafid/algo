@@ -1,6 +1,7 @@
 #include "gaussian.h"
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 
 namespace GaussianSolver {
     Matrix ReadCSV(const std::string& filename) {
@@ -32,6 +33,9 @@ namespace GaussianSolver {
     void WriteCSV(const std::string& filename, const Matrix& data) {
         std::ofstream file(filename);
         if (!file) throw std::runtime_error("Cannot open file: " + filename);
+        
+        // Set high precision for floating-point output
+        file << std::setprecision(15);
         
         for (int i = 0; i < data.rows(); ++i) {
             for (int j = 0; j < data.cols(); ++j) {
