@@ -34,11 +34,16 @@ std::string encode(const std::string& data) {
             encoded[j] = static_cast<char>(chunk % 85 + 33);
             chunk /= 85;
         }
-        output.append(encoded, bytes + 1);
+        
+        // Append only the needed characters
+        for (int j = 0; j < bytes + 1; ++j) {
+            output += encoded[j];
+        }
     }
 
     return output + "~>";
 }
+
 
 std::string decode(const std::string& input) {
     std::string clean;
