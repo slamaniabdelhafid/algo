@@ -1,37 +1,46 @@
-# Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++14 -Wall -I.        # -I. includes current dir (for ascii85.hpp)
+CXXFLAGS = -std=c++17 -O3 -march=native -Iinclude -Wall -Wextra
+LDFLAGS = -lgtest -lgtest_main -pthread
+EIGEN_FLAGS = -I/usr/include/eigen3
 
-# Google Test flags
-GTEST_LIBS = -lgtest -lgtest_main -pthread
+TARGET = bin/gaussian_solver
+TEST_TARGET = bin/gaussian_tests
 
-# Files
-SRC = ascii85.cpp
-MAIN = main.cpp
-TEST = test.cpp
+# Source files
+SRC_DIR = src
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+OBJS = $(patsubst $(SRC_DIR)/%.cpp,obj/%.o,$(SRCS))
 
-# Outputs
-BIN = ascii85
-TEST_BIN = test_ascii85
+# Test files
+TEST_DIR = test
+TEST_SRCS = $(wildcard $(TEST_DIR)/*.cpp)
+TEST_OBJS = $(patsubst $(TEST_DIR)/%.cpp,obj/%.o,$(TEST_SRCS))
 
-# Object files
-OBJS = $(SRC:.cpp=.o)
-MAIN_OBJ = $(MAIN:.cpp=.o)
-TEST_OBJ = $(TEST:.cpp=.o)
+all: $(TARGET) $(TEST_TARGET)
 
-all: $(BIN) $(TEST_BIN)
+$(TARGET): $(OBJS)
+	@mkdir -p bin
+	$(CXX) $(CXXFLAGS) $(EIGEN_FLAGS) $^ -o $@
 
-$(BIN): $(OBJS) $(MAIN_OBJ)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+$(TEST_TARGET): $(filter-out obj/main.o,$(OBJS)) $(TEST_OBJS)
+	$(CXX) $(CXXFLAGS) $(EIGEN_FLAGS) $^ -o $@ $(LDFLAGS)
 
-$(TEST_BIN): $(OBJS) $(TEST_OBJ)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(GTEST_LIBS)
+obj/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p obj
+	$(CXX) $(CXXFLAGS) $(EIGEN_FLAGS) -c $< -o $@
 
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+obj/%.o: $(TEST_DIR)/%.cpp
+	@mkdir -p obj
+	$(CXX) $(CXXFLAGS) $(EIGEN_FLAGS) -c $< -o $@
 
-python-test: $(BIN)
-	python3 test_random.py
+test: $(TEST_TARGET)
+	./$(TEST_TARGET)
+
+test-samples: $(TARGET)
+	@./$(TARGET) samples/input.csv samples/output.csv
+	@diff -q samples/output.csv samples/expected_output.csv && echo "Sample test passed!" || (echo "Sample test failed!"; exit 1)
 
 clean:
-	rm -f *.o $(BIN) $(TEST_BIN)
+	rm -rf obj bin samples/output.csv
+
+.PHONY: all test test-samples clean
