@@ -1,8 +1,14 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -O3 -march=native -Iinclude -Wall -Wextra
-LDFLAGS = -lgtest -lgtest_main -pthread
+CXXFLAGS = -std=c++17 -O3 -Iinclude -Wall -Wextra
+LDFLAGS = -lgtest -lgtest_main -lpthread
 EIGEN_FLAGS = -I/usr/include/eigen3
 
+# Disable march=native in CI for compatibility
+ifneq ($(CI),true)
+    CXXFLAGS += -march=native
+endif
+
+# Targets
 TARGET = bin/gaussian_solver
 TEST_TARGET = bin/gaussian_tests
 
@@ -16,6 +22,7 @@ TEST_DIR = test
 TEST_SRCS = $(wildcard $(TEST_DIR)/*.cpp)
 TEST_OBJS = $(patsubst $(TEST_DIR)/%.cpp,obj/%.o,$(TEST_SRCS))
 
+# Rules
 all: $(TARGET) $(TEST_TARGET)
 
 $(TARGET): $(OBJS)
@@ -31,7 +38,7 @@ obj/%.o: $(SRC_DIR)/%.cpp
 
 obj/%.o: $(TEST_DIR)/%.cpp
 	@mkdir -p obj
-	$(CXX) $(CXXFLAGS) $(EIGEN_FLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(EIGEN_FLAGS) -I/usr/include/gtest -c $< -o $@
 
 test: $(TEST_TARGET)
 	./$(TEST_TARGET)
