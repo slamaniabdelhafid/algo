@@ -42,17 +42,12 @@ std::string encode(const std::string& data) {
 
 std::string decode(const std::string& input) {
     std::string clean;
-    bool in_z_block = false;
-
+    
     // Strip delimiters
     if (input.size() >= 2 && input.substr(0, 2) == "<~") {
-        clean = input.substr(2);
+        clean = input.substr(2, input.size() - 4); // Remove both <~ and ~>
     } else {
         clean = input;
-    }
-
-    if (clean.size() >= 2 && clean.substr(clean.size() - 2) == "~>") {
-        clean = clean.substr(0, clean.size() - 2);
     }
 
     std::string result;
@@ -80,6 +75,7 @@ std::string decode(const std::string& input) {
                 value = value * 85 + group[i];
             }
 
+            // Output exactly 4 bytes
             for (int i = 0; i < 4; ++i) {
                 result += static_cast<char>((value >> (24 - 8 * i)) & 0xFF);
             }
@@ -87,16 +83,21 @@ std::string decode(const std::string& input) {
         }
     }
 
-    // Handle partial group
+    // Handle partial group (1-4 remaining chars)
     if (!group.empty()) {
-        group.resize(5, 84); 
         uint32_t value = 0;
-        for (int i = 0; i < 5; ++i) {
+        size_t padding = 5 - group.size();
+        
+        // Pad with 'u' (ASCII 117, code 84)
+        for (size_t i = 0; i < group.size(); ++i) {
             value = value * 85 + group[i];
         }
+        for (size_t i = 0; i < padding; ++i) {
+            value = value * 85 + 84;
+        }
 
-        for (size_t i = 0; i < group.size() - 1; ++i) {
-            if (i < (5 - group.size())) continue;
+        // Output only the real bytes (not padding)
+        for (size_t i = 0; i < 4 - padding; ++i) {
             result += static_cast<char>((value >> (24 - 8 * i)) & 0xFF);
         }
     }
@@ -104,4 +105,4 @@ std::string decode(const std::string& input) {
     return result;
 }
 
-} 
+} // namespace ascii85
