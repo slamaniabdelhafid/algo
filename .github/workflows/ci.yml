@@ -8,11 +8,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y g++ make nlohmann-json3-dev
-        
+    - name: Download JSON library
+      run: wget https://github.com/nlohmann/json/releases/download/v3.11.2/json.hpp -P include/
+    
     - name: Build
       run: make
     
