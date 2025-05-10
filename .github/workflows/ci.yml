@@ -1,5 +1,4 @@
 name: CI
-
 on: [push, pull_request]
 
 jobs:
@@ -7,12 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    
-    - name: Download JSON library
-      run: wget https://github.com/nlohmann/json/releases/download/v3.11.2/json.hpp -P include/
-    
     - name: Build
       run: make
-    
     - name: Run tests
       run: make test
