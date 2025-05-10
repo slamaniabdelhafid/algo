@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -Iinclude
-LDFLAGS =  # Removed -lnlohmann_json
+LDFLAGS =
 
 TARGET = shannon_coder
 TEST_TARGET = test_shannon
