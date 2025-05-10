@@ -3,6 +3,7 @@
 #include <cassert>
 #include <fstream>
 #include <vector>
+#include <cstdint>
 
 void test_encode_decode() {
     // Create test file
@@ -13,16 +14,20 @@ void test_encode_decode() {
     out.close();
 
     // Test encode/decode
-    encode_file(input_path, "compressed.bin", "dict.json");
-    decode_file("compressed.bin", "dict.json", "output.bin");
+    encode_file(input_path, "compressed.bin", "dict.txt");
+    decode_file("compressed.bin", "dict.txt", "output.bin");
 
     // Verify
     std::ifstream in("output.bin", std::ios::binary);
-    std::vector<uint8_t> decoded_data(
+    std::vector<uint8_t> decoded_data{
         std::istreambuf_iterator<char>(in),
         std::istreambuf_iterator<char>()
-    );
-    assert(decoded_data == test_data);
+    };
+    
+    assert(decoded_data.size() == test_data.size());
+    for (size_t i = 0; i < decoded_data.size(); ++i) {
+        assert(decoded_data[i] == test_data[i]);
+    }
 }
 
 int main() {
