@@ -1,29 +1,23 @@
-#include "ascii85.h"
+#include "encoder.hpp"
+#include "decoder.hpp"
 #include <iostream>
-#include <iterator>  // Add this for std::istreambuf_iterator
+#include <string>
 
 int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " [-e|-d]\n";
+    if (argc < 2) {
+        std::cerr << "Usage:\n"
+                  << "  Encode: " << argv[0] << " encode <input> <compressed> <dict>\n"
+                  << "  Decode: " << argv[0] << " decode <compressed> <dict> <output>\n";
         return 1;
     }
 
-    std::string input(std::istreambuf_iterator<char>(std::cin), {});
-    
-    try {
-        if (std::string(argv[1]) == "-e") {
-            std::cout << ascii85::encode(input);
-        } 
-        else if (std::string(argv[1]) == "-d") {
-            std::cout << ascii85::decode(input);
-        } 
-        else {
-            std::cerr << "Invalid mode. Use -e (encode) or -d (decode)\n";
-            return 1;
-        }
-    } 
-    catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << "\n";
+    std::string mode(argv[1]);
+    if (mode == "encode" && argc == 5) {
+        encode_file(argv[2], argv[3], argv[4]);
+    } else if (mode == "decode" && argc == 5) {
+        decode_file(argv[2], argv[3], argv[4]);
+    } else {
+        std::cerr << "Invalid arguments\n";
         return 1;
     }
 
