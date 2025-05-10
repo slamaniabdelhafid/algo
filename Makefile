@@ -1,24 +1,34 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -I.
-GTEST_LIBS = -lgtest -lgtest_main -pthread
+CXXFLAGS = -std=c++17 -Wall -Wextra -Iinclude
+LDFLAGS = 
 
-TARGET = ascii85
-TEST_TARGET = test_ascii85
+# Targets
+TARGET = shannon_coder
+TEST_TARGET = test_shannon
 
-SRC = ascii85.cpp main.cpp
-TEST_SRC = ascii85.cpp test.cpp
+# Sources
+SRCS = $(wildcard src/*.cpp)
+OBJS = $(SRCS:.cpp=.o)
+MAIN_OBJ = main.o
 
-all: $(TARGET) $(TEST_TARGET)
+TEST_SRCS = $(wildcard tests/*.cpp)
+TEST_OBJS = $(TEST_SRCS:.cpp=.o)
 
-$(TARGET): $(SRC)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+.PHONY: all clean test
 
-$(TEST_TARGET): $(TEST_SRC)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(GTEST_LIBS)
+all: $(TARGET)
+
+$(TARGET): $(OBJS) $(MAIN_OBJ)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) -lnlohmann_json
 
 test: $(TEST_TARGET)
 	./$(TEST_TARGET)
-	python3 test_random.py
+
+$(TEST_TARGET): $(filter-out $(MAIN_OBJ), $(OBJS)) $(TEST_OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) -lnlohmann_json
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clean:
-	rm -f $(TARGET) $(TEST_TARGET) *.o
+	rm -f $(TARGET) $(TEST_TARGET) $(OBJS) $(MAIN_OBJ) $(TEST_OBJS)
