@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
-#include <map>
-#include <vector>
+#include <cstdint> // Added for uint8_t
 
 void encode_file(
     const std::string& input_path,
