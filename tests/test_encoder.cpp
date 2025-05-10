@@ -25,23 +25,23 @@ void test_encode_decode() {
 
     // Verify
     std::ifstream in(output_path, std::ios::binary);
-    std::vector<uint8_t> decoded_data(
+    std::vector<uint8_t> decoded_data{
         std::istreambuf_iterator<char>(in),
         std::istreambuf_iterator<char>()
-    );
+    };
 
     // Debug output
     std::cout << "Original size: " << test_data.size() 
               << ", Decoded size: " << decoded_data.size() << "\n";
               
-    if (decoded_data != test_data) {
-        std::cerr << "Mismatch found!\n";
-        std::cerr << "Original: ";
-        for (auto b : test_data) std::cerr << (int)b << " ";
-        std::cerr << "\nDecoded: ";
-        for (auto b : decoded_data) std::cerr << (int)b << " ";
-        std::cerr << "\n";
-        assert(false);
+    assert(decoded_data.size() == test_data.size());
+    for (size_t i = 0; i < decoded_data.size(); ++i) {
+        if (decoded_data[i] != test_data[i]) {
+            std::cerr << "Mismatch at position " << i 
+                      << ": Original=" << (int)test_data[i]
+                      << ", Decoded=" << (int)decoded_data[i] << "\n";
+            assert(false);
+        }
     }
     
     std::cout << "Test passed successfully!\n";
