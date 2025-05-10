@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include <fstream>
+#include <cstdint>  // Added for uint8_t
 #include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
