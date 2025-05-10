@@ -41,6 +41,8 @@ void decode_file(
         }
     }
     
+    // Ensure we write all decoded data
     std::ofstream out(output_path, std::ios::binary);
     out.write(reinterpret_cast<const char*>(output.data()), output.size());
+    out.close(); // Explicit close to ensure flush
 }
