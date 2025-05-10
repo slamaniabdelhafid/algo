@@ -2,8 +2,10 @@
 #include <map>
 #include <string>
 #include <fstream>
-#include <cstdint>  // Added for uint8_t
-#include "nlohmann/json.hpp"
+#include <cstdint>
+
+// Use relative path to json.hpp
+#include "./nlohmann/json.hpp"
 
 using json = nlohmann::json;
 
