@@ -3,10 +3,9 @@
 #include "shannon_fano.hpp"
 #include "utils.hpp"
 #include <fstream>
-#include <sstream>
 #include <bitset>
 #include <vector>
-#include <cstdint> // Added for uint8_t
+#include <cstdint>
 
 std::vector<uint8_t> read_file(const std::string& path) {
     std::ifstream file(path, std::ios::binary);
@@ -16,13 +15,15 @@ std::vector<uint8_t> read_file(const std::string& path) {
     );
 }
 
-void write_compressed(
-    const std::string& bit_string,
-    const std::string& output_path
-) {
+void write_compressed(const std::string& bit_string, const std::string& output_path) {
     std::ofstream out(output_path, std::ios::binary);
     
-    size_t padding = (8 - (bit_string.size() % 8)) % 8;
+    // Write original bit length (4 bytes)
+    uint32_t bit_length = bit_string.size();
+    out.write(reinterpret_cast<const char*>(&bit_length), sizeof(bit_length));
+    
+    // Write padded bits
+    size_t padding = (8 - (bit_length % 8)) % 8;
     std::string padded = bit_string + std::string(padding, '0');
     
     for (size_t i = 0; i < padded.size(); i += 8) {
@@ -31,11 +32,9 @@ void write_compressed(
     }
 }
 
-void encode_file(
-    const std::string& input_path,
-    const std::string& output_path,
-    const std::string& dict_path
-) {
+void encode_file(const std::string& input_path, 
+                const std::string& output_path,
+                const std::string& dict_path) {
     auto data = read_file(input_path);
     auto freq = build_frequency_table(data);
     auto codes = shannon_fano_codes(freq);
