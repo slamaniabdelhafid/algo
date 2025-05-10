@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <cstdint>
+#include <iostream> // For better error reporting
 
 void test_encode_decode() {
     // Create test file
@@ -24,10 +25,22 @@ void test_encode_decode() {
         std::istreambuf_iterator<char>()
     };
     
-    assert(decoded_data.size() == test_data.size());
-    for (size_t i = 0; i < decoded_data.size(); ++i) {
-        assert(decoded_data[i] == test_data[i]);
+    if (decoded_data.size() != test_data.size()) {
+        std::cerr << "Size mismatch! Original: " << test_data.size() 
+                  << ", Decoded: " << decoded_data.size() << "\n";
+        assert(false);
     }
+    
+    for (size_t i = 0; i < decoded_data.size(); ++i) {
+        if (decoded_data[i] != test_data[i]) {
+            std::cerr << "Mismatch at position " << i 
+                      << ": Original=" << test_data[i] 
+                      << ", Decoded=" << decoded_data[i] << "\n";
+            assert(false);
+        }
+    }
+    
+    std::cout << "Encoder test passed successfully!\n";
 }
 
 int main() {
