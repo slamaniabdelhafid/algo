@@ -2,23 +2,24 @@
 #include <iostream>
 
 void save_dictionary(const std::map<uint8_t, std::string>& codes, const std::string& file_path) {
-    json j;
-    for (const auto& [sym, code] : codes) {
-        j[std::to_string(sym)] = code;
-    }
-    
     std::ofstream file(file_path);
-    file << j.dump(4);
+    for (const auto& [sym, code] : codes) {
+        file << static_cast<int>(sym) << ":" << code << "\n";
+    }
 }
 
 std::map<uint8_t, std::string> load_dictionary(const std::string& file_path) {
     std::ifstream file(file_path);
-    json j;
-    file >> j;
-    
     std::map<uint8_t, std::string> codes;
-    for (auto& [sym_str, code] : j.items()) {
-        codes[static_cast<uint8_t>(std::stoi(sym_str))] = code;
+    std::string line;
+    
+    while (std::getline(file, line)) {
+        size_t colon_pos = line.find(':');
+        if (colon_pos != std::string::npos) {
+            int sym = std::stoi(line.substr(0, colon_pos));
+            std::string code = line.substr(colon_pos + 1);
+            codes[static_cast<uint8_t>(sym)] = code;
+        }
     }
     
     return codes;
