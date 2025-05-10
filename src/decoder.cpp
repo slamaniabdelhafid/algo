@@ -3,6 +3,8 @@
 #include <fstream>
 #include <bitset>
 #include <unordered_map>
+#include <vector>  // Added for std::vector
+#include <cstdint> // Added for uint8_t
 
 std::string read_compressed(const std::string& path) {
     std::ifstream file(path, std::ios::binary);
@@ -33,7 +35,7 @@ void decode_file(
     
     for (char bit : bit_string) {
         current_code += bit;
-        if (reverse_codes.count(current_code)) {
+        if (reverse_codes.find(current_code) != reverse_codes.end()) {
             output.push_back(reverse_codes[current_code]);
             current_code.clear();
         }
