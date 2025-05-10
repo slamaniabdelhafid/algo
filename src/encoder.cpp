@@ -5,6 +5,8 @@
 #include <fstream>
 #include <sstream>
 #include <bitset>
+#include <vector>
+#include <cstdint> // Added for uint8_t
 
 std::vector<uint8_t> read_file(const std::string& path) {
     std::ifstream file(path, std::ios::binary);
@@ -20,7 +22,6 @@ void write_compressed(
 ) {
     std::ofstream out(output_path, std::ios::binary);
     
-    // Pad with zeros to make length multiple of 8
     size_t padding = (8 - (bit_string.size() % 8)) % 8;
     std::string padded = bit_string + std::string(padding, '0');
     
