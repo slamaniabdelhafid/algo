@@ -1,9 +1,7 @@
 #include "utils.hpp"
+#include <iostream>
 
-void save_dictionary(
-    const std::map<uint8_t, std::string>& codes,
-    const std::string& file_path
-) {
+void save_dictionary(const std::map<uint8_t, std::string>& codes, const std::string& file_path) {
     json j;
     for (const auto& [sym, code] : codes) {
         j[std::to_string(sym)] = code;
@@ -13,9 +11,7 @@ void save_dictionary(
     file << j.dump(4);
 }
 
-std::map<uint8_t, std::string> load_dictionary(
-    const std::string& file_path
-) {
+std::map<uint8_t, std::string> load_dictionary(const std::string& file_path) {
     std::ifstream file(file_path);
     json j;
     file >> j;
